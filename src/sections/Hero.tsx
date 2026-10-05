@@ -69,7 +69,7 @@ export default function Hero() {
         </span>
 
         <div className="cta">
-          <a className="btn" href="#begin">Try It Now</a>
+          <a className="btn" href="#/raft">Try It Now</a>
           <a className="btn ghost" href="#">Login</a>
         </div>
       </div>

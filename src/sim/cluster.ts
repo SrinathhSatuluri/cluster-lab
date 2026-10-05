@@ -66,21 +66,26 @@ export class RaftCluster {
     );
   }
 
-  /** Rebuild the run of `seed` with `actions`, up to tick `until`. */
+  /**
+   * Rebuild the run of `seed` with `actions`, up to tick `until`, calling
+   * `onStep` after every tick.
+   */
   static replay(
     seed: number,
     actions: readonly Action[],
     until: number,
     options: ClusterOptions = {},
+    onStep: (cluster: RaftCluster) => void = () => {},
   ): RaftCluster {
     const cluster = new RaftCluster(seed, options);
     let next = 0;
     for (;;) {
       while (next < actions.length && actions[next].tick === cluster.now) {
-        cluster.apply(actions[next++]);
+        cluster.apply(actions[next++], true);
       }
       if (cluster.now >= until) return cluster;
       cluster.step();
+      onStep(cluster);
     }
   }
 

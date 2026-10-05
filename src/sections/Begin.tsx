@@ -6,7 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
 const CARDS = [
-  { n: '01', name: 'Raft Consensus', level: 'Beginner', desc: 'Elect leaders, replicate logs, kill nodes.', target: '#' },
+  { n: '01', name: 'Raft Consensus', level: 'Beginner', desc: 'Elect leaders, replicate logs, kill nodes.', target: '#/raft' },
   { n: '02', name: 'Gossip & SWIM', level: 'Intermediate', desc: 'Epidemic failure detection at scale.', target: '#' },
   { n: '03', name: 'Sharded KV Store', level: 'Advanced', desc: 'Consistent hashing, hot-key mitigation.', target: '#' },
 ];

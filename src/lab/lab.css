@@ -1,0 +1,165 @@
+/* The Raft simulator page. Uses the landing page's tokens from index.css. */
+
+.lab {
+  --amber: #f5c76b;
+  --red: #ff6b6b;
+  --panel: #0b0e12;
+  min-height: 100vh;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 28px 16px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.lab-head { display: flex; flex-direction: column; gap: 8px; }
+.lab-back { color: var(--dim); font-size: 14px; width: fit-content; }
+.lab-back:hover, .lab-back:focus-visible { color: var(--accent); }
+.lab-head h1 {
+  font-family: var(--font-spencer);
+  font-weight: 400;
+  font-size: clamp(32px, 5vw, 56px);
+  letter-spacing: -0.02em;
+}
+.lab-sub { color: var(--dim); max-width: 62ch; line-height: 1.5; }
+
+.lab-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.lab-bar.faults { padding-bottom: 4px; border-bottom: 1px solid var(--line); }
+.lab-bar button,
+.lab-bar select,
+.lab-bar input {
+  font: inherit;
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 7px 12px;
+}
+.lab-bar button { cursor: pointer; }
+.lab-bar button:hover:not(:disabled) { border-color: var(--accent); }
+.lab-bar button:focus-visible,
+.lab-bar select:focus-visible,
+.lab-bar input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.lab-bar button:disabled { opacity: 0.4; cursor: default; }
+.lab-bar button.primary { background: var(--accent); color: #000; border-color: var(--accent); }
+.lab-bar label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--dim); }
+.lab-seed input { width: 90px; }
+.lab-tick { color: var(--accent); font-size: 20px; margin-left: 4px; min-width: 6ch; }
+.lab-note { font-size: 13px; color: var(--accent); }
+
+.lab-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 16px;
+}
+@media (max-width: 860px) {
+  .lab-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+.lab-panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 16px;
+  min-width: 0;
+}
+.lab-panel h2 {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 6px;
+}
+.lab-panel h2:not(:first-child) { margin-top: 18px; }
+.lab-small { font-size: 12px; color: var(--dim); line-height: 1.5; }
+.lab-hint { font-size: 13px; color: var(--dim); text-align: center; }
+
+/* Cluster ring */
+.ring svg { width: 100%; max-width: 460px; display: block; margin: 0 auto; }
+.link { stroke: var(--line); stroke-width: 1.5; }
+.link.cut { stroke: var(--red); stroke-opacity: 0.35; stroke-dasharray: 4 6; }
+
+.node { cursor: pointer; }
+.node:focus { outline: none; }
+.node:focus-visible .body { stroke: var(--ink); stroke-width: 3; }
+.node .body { fill: #10151c; stroke: var(--dim); stroke-width: 2; transition: fill .2s, stroke .2s; }
+.node.leader .body { fill: var(--accent); stroke: var(--accent); }
+.node.candidate .body { fill: #2a2210; stroke: var(--amber); }
+.node.down .body { fill: #000; stroke: #3a2020; stroke-dasharray: 3 4; }
+.node .label { font-family: var(--font-jersey); font-size: 20px; fill: var(--ink); text-anchor: middle; }
+.node .term { font-size: 10px; fill: var(--dim); text-anchor: middle; }
+.node.leader .label, .node.leader .term { fill: #000; }
+.node.leader.stale .body { fill: #10151c; stroke-dasharray: 6 4; stroke-width: 3; }
+.node.leader.stale .label { fill: var(--accent); }
+.node.leader.stale .term { fill: var(--dim); }
+.node.down .label { fill: #5a4040; }
+.node .timer { fill: none; stroke: var(--amber); stroke-opacity: 0.6; stroke-width: 2; }
+.node .group { font-family: var(--font-jersey); font-size: 16px; fill: var(--red); text-anchor: middle; }
+
+.msg { stroke: none; }
+.msg.vote { fill: var(--amber); }
+.msg.vote-yes { fill: #ffe7a8; }
+.msg.vote-no { fill: #6b5a33; }
+.msg.append { fill: var(--accent); }
+.msg.heartbeat { fill: #3f8f74; }
+.msg.ack { fill: #7aa2ff; }
+.msg.nack { fill: var(--red); }
+
+.lab-legend { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 8px; font-size: 12px; color: var(--dim); }
+.lab-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.lab-legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: currentColor; }
+.lab-legend i.vote { background: var(--amber); }
+.lab-legend i.vote-yes { background: #ffe7a8; }
+.lab-legend i.append { background: var(--accent); }
+.lab-legend i.heartbeat { background: #3f8f74; }
+.lab-legend i.ack { background: #7aa2ff; }
+
+/* Invariants and writes */
+.invariants, .writes, .feed { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.invariants li { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; }
+.invariants li span:last-child { display: flex; flex-direction: column; gap: 2px; }
+.invariants small { color: var(--red); font-size: 12px; line-height: 1.4; }
+.inv-mark { width: 18px; text-align: center; }
+.invariants li.ok .inv-mark { color: var(--accent); }
+.invariants li.bad .inv-mark { color: var(--red); }
+
+.writes li { display: grid; grid-template-columns: 5ch minmax(0, 1fr) auto; gap: 10px; align-items: center; font-size: 14px; }
+.pill { font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; border: 1px solid; }
+.pill.pending { color: var(--amber); border-color: var(--amber); }
+.pill.committed { color: #000; background: var(--accent); border-color: var(--accent); }
+.pill.lost { color: var(--red); border-color: var(--red); }
+
+/* Logs */
+.log-scroll { overflow-x: auto; }
+.logs table { border-collapse: separate; border-spacing: 4px; }
+.logs th { font-size: 12px; color: var(--dim); font-weight: 400; text-align: center; min-width: 3.4em; }
+.logs tbody th { text-align: left; color: var(--ink); font-size: 16px; padding-right: 6px; min-width: 0; }
+.logs tr.down th { color: #5a4040; }
+.logs tr.down .entry { opacity: 0.45; }
+.entry {
+  display: block;
+  min-width: 3.4em;
+  padding: 3px 4px;
+  border: 1.5px solid;
+  border-radius: 4px;
+  font-size: 11px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.scrub { width: 100%; accent-color: var(--accent); margin: 8px 0; }
+.feed li { font-size: 13px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .node .body { transition: none; }
+}
