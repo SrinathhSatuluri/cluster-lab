@@ -7,14 +7,16 @@
 //   2. Quiet. Every node restarts, the network heals and stops dropping
 //      messages, and the cluster runs for `quietTicks` more ticks.
 //   3. Liveness. By the end there must be one leader, every node must hold
-//      the same committed log, and a write made during the quiet period
-//      must have committed.
+//      the same committed log, and a client write made during the quiet
+//      period must have committed. Like a real Raft client, the client
+//      retries a write that was rejected, lost, or left with a leader that
+//      has since been deposed, since such a write may never commit.
 //
 // A run is a pure function of its seed: the fault schedule comes from its
 // own generator, the cluster from its own, so any failure replays exactly.
 
 import { Rng } from './rng.ts';
-import { RaftCluster } from './cluster.ts';
+import { RaftCluster, type Write } from './cluster.ts';
 import { InvariantChecker, type Violation } from './checker.ts';
 
 export interface FuzzOptions {
@@ -141,9 +143,22 @@ export function fuzz(options: FuzzOptions): FuzzResult {
   cluster.heal();
   for (const id of ids) cluster.restart(id);
   cluster.setDropRate(0);
-  let finalWrite: ReturnType<RaftCluster['write']> = null;
+  const finalWrites: Write[] = [];
+  const committed = () => finalWrites.some((w) => w.status === 'committed');
   for (let t = 0; t < quietTicks && checker.violations.length === 0; t++) {
-    if (!finalWrite && t >= 50) finalWrite = cluster.write('final');
+    if (t >= 50 && !committed()) {
+      const last = finalWrites[finalWrites.length - 1];
+      const owner = last ? cluster.nodes[last.leader] : null;
+      const abandoned =
+        !last ||
+        last.status === 'lost' ||
+        owner!.role !== 'leader' ||
+        owner!.currentTerm !== last.term;
+      if (abandoned) {
+        const write = cluster.write(`final${finalWrites.length + 1}`);
+        if (write) finalWrites.push(write);
+      }
+    }
     step();
   }
 
@@ -154,7 +169,7 @@ export function fuzz(options: FuzzOptions): FuzzResult {
     const leader = leaders[0];
     if (leaders.length !== 1) {
       livenessFailure = `${leaders.length} leaders after the faults stopped`;
-    } else if (!finalWrite || finalWrite.status !== 'committed') {
+    } else if (!committed()) {
       livenessFailure = 'a write after the faults stopped did not commit';
     } else {
       for (const node of cluster.nodes) {

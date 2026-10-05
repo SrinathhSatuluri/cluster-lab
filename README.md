@@ -48,8 +48,10 @@ timeline rewinds by replaying up to the chosen tick.
 600 ticks of random writes, crashes, restarts, partitions into two or three
 groups, heals and 5% message loss, with the checker running every tick; then
 every node restarts on a reliable network and the cluster must elect one
-leader, commit a new write, and bring every node's committed log level. A
-failing seed is printed and replays exactly.
+leader, commit a new write, and bring every node's committed log level. Like
+a real Raft client, the fuzzer retries that write if it is rejected, lost, or
+left with a leader that has since been deposed. A failing seed is printed and
+replays exactly.
 
 CI runs 2,000 new seeds on every push, alongside typecheck, unit tests and
 build. A local run:
