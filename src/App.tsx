@@ -7,7 +7,8 @@ import Hero from './sections/Hero';
 import About from './sections/About';
 import Overview from './sections/Overview';
 import Benefits from './sections/Benefits';
-import Modules from './sections/Modules';
+import Begin from './sections/Begin';
+import Closer from './sections/Closer';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -28,7 +29,7 @@ export default function App() {
           <li><ScrambleLink href="#about">About</ScrambleLink></li>
           <li><ScrambleLink href="#overview">Overview</ScrambleLink></li>
           <li><ScrambleLink href="#benefits">Benefits</ScrambleLink></li>
-          <li><ScrambleLink href="#modules">Modules</ScrambleLink></li>
+          <li><ScrambleLink href="#begin">Begin</ScrambleLink></li>
         </ul>
         <div className="nav-spacer" />
       </nav>
@@ -36,7 +37,8 @@ export default function App() {
       <About />
       <Overview />
       <Benefits />
-      <Modules />
+      <Begin />
+      <Closer />
       <footer>
         <span>© Cluster-Lab — a demo</span>
         <span className="accent">v0.1.0</span>

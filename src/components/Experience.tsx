@@ -9,7 +9,7 @@ import { DitherEffect } from './DitherEffect';
 
 gsap.registerPlugin(ScrollTrigger, Observer);
 
-const COUNT = 420;
+const COUNT = 180;
 const BOUNDS = 4.5;
 const MAX_SPEED = 2.2;
 const NEIGHBOR_R = 1.2;
@@ -141,13 +141,13 @@ export default function Experience() {
   });
 
   const dither = useMemo(
-    () => new DitherEffect({ bg: '#05070a', fg: '#6ef3c5', pixel: 3 }),
+    () => new DitherEffect({ bg: '#000', fg: '#6ef3c5', pixel: 3 }),
     []
   );
 
   return (
     <>
-      <color attach="background" args={['#05070a']} />
+      <color attach="background" args={['#000']} />
       <points geometry={geom} material={mat} />
 
       <EffectComposer>

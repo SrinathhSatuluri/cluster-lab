@@ -4,6 +4,7 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import ClusterGraph from '../components/ClusterGraph';
+import { useInView } from '../hooks/useInView';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -16,6 +17,8 @@ const STATS = [
 
 export default function Benefits() {
   const container = useRef<HTMLElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(stageRef);
 
   useGSAP(() => {
     gsap.from('.b-stage', {
@@ -43,8 +46,11 @@ export default function Benefits() {
             <p className="b-body">{s.body}</p>
           </div>
         ))}
-        <div className="b-stage">
-          <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 8], fov: 45 }}
+        <div className="b-stage" ref={stageRef}>
+          <Canvas
+            dpr={[1, 1.5]}
+            frameloop={inView ? 'always' : 'never'}
+            camera={{ position: [0, 0, 8], fov: 45 }}
             style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
             <ambientLight intensity={0.6} />
             <Suspense fallback={null}><ClusterGraph /></Suspense>

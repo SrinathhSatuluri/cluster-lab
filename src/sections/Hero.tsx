@@ -6,11 +6,14 @@ import ScrambleTextPlugin from 'gsap/ScrambleTextPlugin';
 import TextPlugin from 'gsap/TextPlugin';
 import Experience from '../components/Experience';
 import Marquee from '../components/Marquee';
+import { useInView } from '../hooks/useInView';
 
 gsap.registerPlugin(ScrambleTextPlugin, TextPlugin);
 
 export default function Hero() {
   const container = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(stageRef);
 
   useGSAP(() => {
     const tl = gsap.timeline();
@@ -43,11 +46,10 @@ export default function Hero() {
         <div className="brand-big text-hero">Cluster-Lab</div>
       </div>
 
-      <div className="stage">
-        <div className="label">CLUSTER <b>DEMO</b> &nbsp;·&nbsp; RENDER <b>ASCII</b> &nbsp;·&nbsp; MODE <b>PREVIEW</b></div>
-
+      <div className="stage" ref={stageRef}>
         <Canvas
-          dpr={[1, 2]}
+          dpr={[1, 1.5]}
+          frameloop={inView ? 'always' : 'never'}
           camera={{ position: [0, 0, 9], fov: 45 }}
           style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', zIndex: 1 }}
         >
@@ -67,7 +69,7 @@ export default function Hero() {
         </span>
 
         <div className="cta">
-          <a className="btn" href="#modules">Try It Now</a>
+          <a className="btn" href="#begin">Try It Now</a>
           <a className="btn ghost" href="#">Login</a>
         </div>
       </div>
