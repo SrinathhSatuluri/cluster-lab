@@ -1,5 +1,7 @@
 // Pixel-art Glenda — Plan 9's bunny mascot, rendered as a pixel grid in accent.
 // Each char = one cell. '#' filled, '.' transparent, 'o' eye (bg), 'x' cheek.
+import type { ReactElement } from 'react';
+
 const ART = [
   '....##........##....',
   '...####......####...',
@@ -28,7 +30,7 @@ const COLS = ART[0].length;
 const ROWS = ART.length;
 
 export default function Glenda({ className = '' }: { className?: string }) {
-  const cells: JSX.Element[] = [];
+  const cells: ReactElement[] = [];
   for (let y = 0; y < ROWS; y++) {
     for (let x = 0; x < COLS; x++) {
       const c = ART[y][x];
