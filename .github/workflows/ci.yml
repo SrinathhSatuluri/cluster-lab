@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: typecheck, test and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Typecheck
+        run: npx tsc
+      - name: Unit tests
+        run: npm test
+      - name: Build
+        run: npx vite build
+
+  fuzz:
+    name: raft fuzz
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      # New seeds every run; the first seed is printed so a failure replays.
+      - name: Fuzz 2,000 seeds with crashes, partitions and dropped messages
+        run: npm run fuzz -- 2000 ${{ github.run_number }}000

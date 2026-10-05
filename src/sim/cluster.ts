@@ -20,7 +20,8 @@ export type Action =
   | { tick: number; kind: 'crash'; node: number }
   | { tick: number; kind: 'restart'; node: number }
   | { tick: number; kind: 'partition'; groups: number[][] }
-  | { tick: number; kind: 'heal' };
+  | { tick: number; kind: 'heal' }
+  | { tick: number; kind: 'drop-rate'; rate: number };
 
 export interface Write {
   id: number;
@@ -131,6 +132,11 @@ export class RaftCluster {
     this.apply({ tick: this.now, kind: 'heal' }, true);
   }
 
+  /** Set the probability that the network loses any one message. */
+  setDropRate(rate: number): void {
+    this.apply({ tick: this.now, kind: 'drop-rate', rate }, true);
+  }
+
   private apply(action: Action, record = false): void {
     if (record) this.actions.push(action);
     switch (action.kind) {
@@ -148,6 +154,9 @@ export class RaftCluster {
         return;
       case 'heal':
         this.network.heal();
+        return;
+      case 'drop-rate':
+        this.network.config.dropRate = action.rate;
         return;
     }
   }
